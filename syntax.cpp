@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <bitset>
 
 using std::string;
 using std::vector;
@@ -26,10 +27,10 @@ public:
 	bool valid;
 	int opens;
 	int closes;
-	vector<char> pile;
-	vector<char> OpenLang;
-	vector<char> CloseLang;
-	int syntaxChecker::get(vector<char> &a, char b)
+	vector<string> pile;
+	vector<string> OpenLang;
+	vector<string> CloseLang;
+	int syntaxChecker::get(vector<string> &a, string &b)
 	{
 		int i;
 		for(i = 0; i < a.size(); i++)
@@ -39,7 +40,7 @@ public:
 		}
 		return i;
 	}
-	bool syntaxChecker::has(vector<char> &a, char b)
+	bool syntaxChecker::has(vector<string> &a, string &b)
 	{
 		for(int i = 0; i < a.size(); i++)
 		{
@@ -52,7 +53,7 @@ private:
 	//bool has(vector<char> &a, char b); //returns true if the vector has b as an element, else false
 	//int  get(vector<char> &a, char b);  //returns index of b in a if a has b, else a.size()
 
-	void push(char a)
+	void push(string &a)
 	{
 			pile.push_back(a);
 	}
@@ -139,18 +140,18 @@ public:
 		because "Easymode" specifications specify so.
 
 	*/
-	void defineOpen(string &str)
+	void defineOpen(vector<string> &strs)
 	{
-		for(int i = 0; i < str.length(); i++)
+		for(int i = 0; i < strs.size(); i++)
 		{
-			OpenLang.push_back(str[i]);
+			OpenLang.push_back(strs[i]);
 		}
 	}
-	void defineClose(string &str)
+	void defineClose(vector<string> &strs)
 	{
-		for(int i = 0; i < str.length(); i++)
+		for(int i = 0; i < strs.size(); i++)
 		{
-			CloseLang.push_back(str[i]);
+			CloseLang.push_back(strs[i]);
 		}
 	}
 	void clear()
@@ -160,14 +161,14 @@ public:
 		CloseLang.clear();
 	}
 
-	void pushOpen(char a)
+	void pushOpen(string &a)
 	{
 		opens++;
 		push(a);
 		if(!has(OpenLang, a))
 			OpenLang.push_back(a);
 	}
-	void pushClose(char a)
+	void pushClose(string &a)
 	{
 		closes++;
 		push(a);
@@ -176,20 +177,23 @@ public:
 	}
 
 	//returns -1 if stack is empty, else last element
-	int pop()
+	string pop()
 	{
 		if (!pile.empty())
 		{
-			int temp =(int) pile.back();
+			string temp = pile.back();
 			pile.pop_back();
 			return temp;
 		}
 		else
-			return -1;
+		{
+			string temp = std::bitset<32>(-1).to_string();
+			return temp;
+		}
 	}
 
 	//push to use if opening and closing langs are predefined
-	void pushAlt(char a)
+	void pushAlt(string &a)
 	{
 		if (has(OpenLang, a))
 			pushOpen(a);

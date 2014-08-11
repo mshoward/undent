@@ -7,15 +7,21 @@
 
 using std::string;
 
+void fillOpeningAndClosing(vector<string> &opn, vector<string> &cls);
+
 int main(int argc, char** argv) {
 	std::fstream file (argv[1]);
 	std::stringstream result;
 	std::string line;
+	string temp;
+	string temp2;
 	syntaxChecker sc;
-	string opening = "{([";
-	string closing = "])}";
+
+	vector<string> opening;
+	vector<string> closing;
 	unsigned short indentLevel = 0;
 
+	fillOpeningAndClosing(opening, closing);
 
 	sc.defineOpen(opening);
 	sc.defineClose(closing);
@@ -32,7 +38,19 @@ int main(int argc, char** argv) {
 		if (l < h && l < f) {
 			--indentLevel;
 		}
-		for(string::size_type i = 0; i < line.length(); i++) sc.pushAlt(line[i]);
+		temp2.clear();
+		temp2 += line[0];
+		sc.pushAlt(temp2);
+		for(string::size_type i = 1; i < line.length(); i++)
+		{
+			temp.clear();
+			temp2.clear();
+			temp += line[i - 1];
+			temp += line[i];
+			temp2 += line[i];
+			sc.pushAlt(temp);
+			sc.pushAlt(temp2);
+		}
 		// Insert the specified number of indents and insert the substring
 		for (unsigned short i = 0; i < indentLevel; ++i) result << '\t';
 		result << line.substr(b) << std::endl;
@@ -52,4 +70,23 @@ int main(int argc, char** argv) {
 	file.close();
 	if (!sc())
 		std::cout << "There are strong indicators that the file isn't syntatically correct." << std::endl;
+	return 0;
 }
+
+void fillOpeningAndClosing(vector<string> &opn, vector<string> &cls)
+{
+	string temp[4] = {"/*", "{", "(", "["} ;
+	for(int i = 0; i < 4; i++)
+	{
+		opn.push_back(temp[i]);
+	}
+	string temp2[4] = {"]", ")", "}", "*/"};
+	for(int i = 0; i < 4; i++)
+	{
+		cls.push_back(temp2[i]);
+	}
+
+}
+
+
+
